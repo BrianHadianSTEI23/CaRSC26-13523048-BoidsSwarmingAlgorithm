@@ -16,3 +16,6 @@ Brian A. Hadian (13523048)
 
 # Notable Source
 - https://github.com/luuu-xu/boids-canvas/
+- https://luuu-xu.github.io/boids-canvas/
+- https://luuu-xu.medium.com/implementing-boids-algorithm-on-canvas-750c4a63a44d
+- https://vanhunteradams.com/Pico/Animal_Movement/Boids-algorithm.html
