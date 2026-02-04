@@ -11,7 +11,7 @@ pygame.display.set_caption("Boids Flocking Algorithm Implementation")
 clock = pygame.time.Clock()
 
 # init the swarm objects
-sw = Swarm(screen, 10, 2, 20, "RANDOM", (0, 0), (800, 600))
+sw = Swarm(screen, 1, 2, 20, "RANDOM", (0, 0), (800, 600))
 
 # Init the engine
 running = True
@@ -23,10 +23,16 @@ while running:
             running = False
 
     screen.fill((30, 30, 30))  # bg color
-    pygame.display.flip()
 
-    # run the sw 
+    # run the sw but only change the values, not draw it onto screen
     sw.run()
+
+    # draw every swarm_object
+    for b in sw.swarm_of_objects :
+        b.draw(screen)
+
+    # buat display ke screen (simpelnya buat clrscr, trs didraw ulang)
+    pygame.display.flip()
 
 pygame.quit()
 sys.exit()
