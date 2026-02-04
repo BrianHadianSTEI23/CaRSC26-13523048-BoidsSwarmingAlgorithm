@@ -1,6 +1,6 @@
 import pygame
 import sys
-import components
+from components.BasicObject import *
 
 pygame.init()
 
@@ -9,6 +9,9 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Boids Flocking Algorithm Implementation")
 
 clock = pygame.time.Clock()
+
+# init the swarm objects
+sw = Swarm(screen, 10, 2, 20, "RANDOM", (0, 0), (800, 600))
 
 # Init the engine
 running = True
@@ -22,11 +25,8 @@ while running:
     screen.fill((30, 30, 30))  # bg color
     pygame.display.flip()
 
-    # init the swarm objects
-    # sw = components.BasicObject.swarm
-
     # run the sw 
-    # sw.run()
+    sw.run()
 
 pygame.quit()
 sys.exit()

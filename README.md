@@ -13,3 +13,6 @@ This is made for the purpose of completing RSC THT 2 of Aksantara ITB.
 
 # Author
 Brian A. Hadian (13523048)
+
+# Notable Source
+- https://github.com/luuu-xu/boids-canvas/
