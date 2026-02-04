@@ -109,7 +109,7 @@ class Swarm:
         for other in self.swarm_of_objects:
             avg_vel += other.velocity
         avg_vel /= len(self.swarm_of_objects)
-        return (avg_vel - boid.velocity) * 0.05 # 0.05 itu constant yang disebut di persamaan
+        return (avg_vel) * 0.05 # 0.05 itu constant yang disebut di persamaan
 
     # calculate the cohesion rule
     def cohesion(self, boid : SwarmObject) -> pg.Vector2 : 
@@ -118,7 +118,7 @@ class Swarm:
         for other in self.swarm_of_objects:
             center += other.pos
         center /= len(self.swarm_of_objects)
-        return (center - boid.pos) * 0.01 # 0.01 itu constant yang disebut di persamaan
+        return (center) * 0.01 # 0.01 itu constant yang disebut di persamaan
   
     # calculate the final value change caused by the boids algorithm + auto update
     def boidsAlgorithm(self) -> None:
