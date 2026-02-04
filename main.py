@@ -11,7 +11,7 @@ pygame.display.set_caption("Boids Flocking Algorithm Implementation")
 clock = pygame.time.Clock()
 
 # init the swarm objects
-sw = Swarm(screen, 1, 2, 20, "RANDOM", (0, 0), (800, 600))
+sw = Swarm(screen, 1, 25, 10, "RANDOM", (0, 0), (800, 600))
 
 # Init the engine
 running = True

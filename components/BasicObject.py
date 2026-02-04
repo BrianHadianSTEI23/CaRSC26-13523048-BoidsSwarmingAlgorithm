@@ -35,8 +35,8 @@ class SwarmObject(BasicObject):
             rd.uniform(-1, 1)
         )
 
-    def update(self, separation_effect : pg.Vector2, alignment_effect : pg.Vector2, cohesion_effect : pg.Vector2) : # for updating
-        self.velocity += separation_effect + alignment_effect + cohesion_effect
+    def update(self, separation_effect : pg.Vector2, alignment_effect : pg.Vector2, cohesion_effect : pg.Vector2, target_effect : pg.Vector2) : # for updating
+        self.velocity += separation_effect + alignment_effect + cohesion_effect + target_effect
 
         if self.velocity.length() > self.speed:
             self.velocity.scale_to_length(self.speed)
@@ -78,8 +78,8 @@ class Swarm:
             for i in range(self.surface.get_height()):
                 for j in range(self.surface.get_width()):
                     random_val = rd.uniform(-1, 1)
-                    if (random_val > 0.9) : # if more than 0, then the obstacle would be drawn
-                        obs = Obstacle(j, i, rd.randint(0, 2), rd.randint(0, 2), (255, 255, 255))
+                    if (random_val > 0.9999) : # if more than 0.9999, then the obstacle would be drawn
+                        obs = Obstacle(j, i, rd.randint(1, 2), rd.randint(1, 2), (255, 255, 255))
                         self.obstacles.append(obs)
         else : # if not unknown, then do it fixed using a certain pattern
             for i in range(self.surface.get_height()):
@@ -109,7 +109,7 @@ class Swarm:
         for other in self.swarm_of_objects:
             avg_vel += other.velocity
         avg_vel /= len(self.swarm_of_objects)
-        return (avg_vel) * 0.05
+        return (avg_vel - boid.velocity) * 0.05 # 0.05 itu constant yang disebut di persamaan
 
     # calculate the cohesion rule
     def cohesion(self, boid : SwarmObject) -> pg.Vector2 : 
@@ -118,20 +118,20 @@ class Swarm:
         for other in self.swarm_of_objects:
             center += other.pos
         center /= len(self.swarm_of_objects)
-        return (center) * 0.01
+        return (center - boid.pos) * 0.01 # 0.01 itu constant yang disebut di persamaan
   
     # calculate the final value change caused by the boids algorithm + auto update
     def boidsAlgorithm(self) -> None:
 
         # determine the cohesion and alignment effect
-
         for boid in self.swarm_of_objects:
+            target_effect : pg.Vector2 = self.targetEffect(boid)
             alignment_effect : pg.Vector2 = self.alignment(boid)
             cohesion_effect : pg.Vector2 = self.cohesion(boid)
             separation_effect : pg.Vector2 = self.separation(boid)
 
             # calculate the final effect + update current boid
-            boid.update(separation_effect, alignment_effect, cohesion_effect)
+            boid.update(separation_effect, alignment_effect, cohesion_effect, target_effect)
 
     # bounce the walls : function to bounce if the position of it is near the wall
     def bounceWall(self) :
@@ -151,12 +151,49 @@ class Swarm:
             elif  (boid.pos.y < 0) :
                 boid.velocity.y *= -1
                 boid.pos.y = 0
-                
+    
+    # avoidObstacle : function to bounce if it was to avoid an obstacle
+    def avoidObstacle(self) :
 
+        for boid in self.swarm_of_objects:
+
+            for obs in self.obstacles :
+
+                if (obs.pos.x < (boid.pos.x + boid.velocity.x) < (obs.pos.x + obs.rect.w)):
+                    boid.pos.x = obs.pos.x - 1
+                    boid.velocity.x *= -1
+                
+                if (obs.pos.y < (boid.pos.y + boid.velocity.y) < (obs.pos.y + obs.rect.h)):
+                    boid.pos.y = obs.pos.y - 1
+                    boid.velocity.y *= -1
+    
+    # targetEffect : calculate the effect towards the target point
+    def targetEffect(self, boid: SwarmObject) -> pg.Vector2:
+        target = pg.Vector2(
+            self.surface.get_width(),
+            self.surface.get_height()
+        )
+
+        desired = target - boid.pos
+
+        if desired.length_squared() == 0:
+            return pg.Vector2(0, 0)
+
+        # desired velocity
+        desired = desired.normalize() * boid.speed
+
+        # steering force
+        steer = desired - boid.velocity
+
+        return steer * 1.5   # this is a random constant
+                
     # main function to move the swarm fro the start to the finish
     def run(self) -> None:
         # for each boids, do boids algorithm
         self.boidsAlgorithm()
+
+        # detect if they were to hit an obstacle
+        self.avoidObstacle()
 
         # then check for each boid, if they hit the wall
         self.bounceWall()
