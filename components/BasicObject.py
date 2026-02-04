@@ -18,7 +18,10 @@ class BasicObject :
         pg.draw.rect(surface, self.color, self.rect)
 
 class Obstacle(BasicObject): # for the obstacles, only to be drawn so it does not need to be complex 
-    pass
+    def __init__(self, x, y, w, h, color):
+        self.pos = pg.Vector2(x, y)     # floats
+        self.rect = pg.Rect(x, y, w, h)
+        self.color = color
 
 class SwarmObject(BasicObject):
 
@@ -51,7 +54,7 @@ class Swarm:
     start_radius : int
     surface : pg.Surface
 
-    # desc : pass the surface, init n_swarm_objects, init the obstacles
+    # constructor : pass the surface, init n_swarm_objects, init the obstacles
     def __init__(self, surface : pg.Surface, start_radius : int, separation_radius : int, n_swarm_objects : int, mode : str, start_position : tuple[int, int],
                   end_position : tuple[int, int]) -> None: # mode is for fixed or random obstacles
         
@@ -63,6 +66,7 @@ class Swarm:
         self.start_radius = start_radius
         self.separation_radius = separation_radius
         self.swarm_of_objects = []
+        self.obstacles = []
 
         # initiate all swarm objects
         for i in range (self.n_swarm_objects):
@@ -73,15 +77,16 @@ class Swarm:
         if mode == "RANDOM" :
             for i in range(self.surface.get_height()):
                 for j in range(self.surface.get_width()):
-                    if (rd.uniform(-1, 1) > 0) : # if more than 0, then the obstacle would be drawn
-                        obs = Obstacle(i, j, rd.randint(0, 2), rd.randint(0, 2), (255, 255, 255))
-                        obs.draw(self.surface)
+                    random_val = rd.uniform(-1, 1)
+                    if (random_val > 0.9) : # if more than 0, then the obstacle would be drawn
+                        obs = Obstacle(j, i, rd.randint(0, 2), rd.randint(0, 2), (255, 255, 255))
+                        self.obstacles.append(obs)
         else : # if not unknown, then do it fixed using a certain pattern
             for i in range(self.surface.get_height()):
                 for j in range(self.surface.get_width()):
                     if ((i % 3 == 0) or (j % 5 == 0)) : # if more than 0, then the obstacle would be drawn
-                        obs = Obstacle(i, j, rd.randint(0, 2), rd.randint(0, 2), (255, 255, 255))
-                        obs.draw(self.surface)
+                        obs = Obstacle(j, i, rd.randint(0, 2), rd.randint(0, 2), (255, 255, 255))
+                        self.obstacles.append(obs)
 
     # calculate the separation rule (this will return the value of separation which has x and y component, and value of separation is the speed)
     def separation(self, current_boid : SwarmObject) -> pg.Vector2 :

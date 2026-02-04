@@ -31,6 +31,10 @@ while running:
     for b in sw.swarm_of_objects :
         b.draw(screen)
 
+    # draw every obstacles
+    for ob in sw.obstacles :
+        ob.draw(screen)
+
     # buat display ke screen (simpelnya buat clrscr, trs didraw ulang)
     pygame.display.flip()
 
